@@ -1,0 +1,18 @@
+<nodes>
+    <node id="A01" x="0.0" y="0.0" type="priority_stop" />
+    <node id="A02" x="0.0" y="100.0" type="priority_stop" />
+    <node id="A03" x="0.0" y="200.0" type="priority_stop" />
+    <node id="A04" x="0.0" y="300.0" type="priority_stop" />
+    <node id="B01" x="100.0" y="0.0" type="priority_stop" />
+    <node id="B02" x="100.0" y="100.0" type="priority_stop"/>
+    <node id="B03" x="100.0" y="200.0" type="priority_stop" />
+    <node id="B04" x="100.0" y="300.0" type="priority_stop" />
+    <node id="C01" x="200.0" y="0.0" type="priority_stop" />
+    <node id="C02" x="200.0" y="100.0" type="priority_stop" />
+    <node id="C03" x="200.0" y="200.0" type="priority_stop" />
+    <node id="C04" x="200.0" y="300.0" type="priority_stop" />
+    <node id="D01" x="300.0" y="0.0" type="priority_stop" />
+    <node id="D02" x="300.0" y="100.0" type="priority_stop" />
+    <node id="D03" x="300.0" y="200.0" type="priority_stop" />
+    <node id="D04" x="300.0" y="300.0" type="priority_stop" />
+</nodes>

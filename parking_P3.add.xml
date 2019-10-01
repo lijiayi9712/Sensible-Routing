@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional>
+    <parkingArea id="P3" lane="DD02_rev_0" startPos="45" endPos="55">
+        <space x="260" y="140" length="5" angle="315"/>
+        <space x="265" y="140" length="5" angle="315"/>
+        <space x="270" y="140" length="5" angle="315"/>
+        <space x="275" y="140" length="5" angle="315"/>
+        <space x="280" y="140" length="5" angle="315"/>
+        <space x="260.0" y="145.0" length="5" angle="315"/>
+        <space x="265.0" y="145.0" length="5" angle="315"/>
+        <space x="270.0" y="145.0" length="5" angle="315"/>
+        <space x="275.0" y="145.0" length="5" angle="315"/>
+        <space x="280.0" y="145.0" length="5" angle="315"/>
+        <space x="260.0" y="150.0" length="5" angle="315"/>
+        <space x="265.0" y="150.0" length="5" angle="315"/>
+        <space x="270.0" y="150.0" length="5" angle="315"/>
+        <space x="275.0" y="150.0" length="5" angle="315"/>
+        <space x="280.0" y="150.0" length="5" angle="315"/>
+        <space x="260.0" y="155.0" length="5" angle="315"/>
+        <space x="265.0" y="155.0" length="5" angle="315"/>
+        <space x="270.0" y="155.0" length="5" angle="315"/>
+        <space x="275.0" y="155.0" length="5" angle="315"/>
+        <space x="280.0" y="155.0" length="5" angle="315"/>
+        <space x="260.0" y="160.0" length="5" angle="315"/>
+        <space x="265.0" y="160.0" length="5" angle="315"/>
+        <space x="270.0" y="160.0" length="5" angle="315"/>
+        <space x="275.0" y="160.0" length="5" angle="315"/>
+        <space x="280.0" y="160.0" length="5" angle="315"/>
+    </parkingArea>
+</additional>

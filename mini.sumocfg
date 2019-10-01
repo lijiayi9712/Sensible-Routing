@@ -1,0 +1,11 @@
+<configuration>
+    <input>
+        <net-file value="mini.net.xml"/>
+        <additional-files value="parking_P1.add.xml, parking_P2.add.xml, parking_P3.add.xml, parking_P4.add.xml"/>
+        <route-files value="min.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="1800"/>
+    </time>
+</configuration>

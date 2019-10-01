@@ -1,0 +1,68 @@
+<edges>
+	<edge from="A01" id="AA01" to="A02" type="L1S25" />
+	<edge from="A02" id="AA02" to="A03" type="L1S25" />
+	<edge from="A03" id="AA03" to="A04" type="L1S25" />
+
+	<edge from="A02" id="AA01_rev" to="A01" type="L1S25" />
+	<edge from="A03" id="AA02_rev" to="A02" type="L1S25" />
+	<edge from="A04" id="AA03_rev" to="A03" type="L1S25" />
+
+
+	<edge from="B01" id="BB01" to="B02" type="L1S25" />
+	<edge from="B02" id="BB02" to="B03" type="L1S25" />
+	<edge from="B03" id="BB03" to="B04" type="L1S25" />
+
+	<edge from="B02" id="BB01_rev" to="B01" type="L1S25" />
+	<edge from="B03" id="BB02_rev" to="B02" type="L1S25" />
+	<edge from="B04" id="BB03_rev" to="B03" type="L1S25" />
+
+	<edge from="C01" id="CC01" to="C02" type="L1S25" />
+	<edge from="C02" id="CC02" to="C03" type="L1S25" />
+	<edge from="C03" id="CC03" to="C04" type="L1S25" />
+
+	<edge from="C02" id="CC01_rev" to="C01" type="L1S25" />
+	<edge from="C03" id="CC02_rev" to="C02" type="L1S25" />
+	<edge from="C04" id="CC03_rev" to="C03" type="L1S25" />
+
+	<edge from="D01" id="DD01" to="D02" type="L1S25" />
+	<edge from="D02" id="DD02" to="D03" type="L1S25" />
+	<edge from="D03" id="DD03" to="D04" type="L1S25" />
+
+	<edge from="D02" id="DD01_rev" to="D01" type="L1S25" />
+	<edge from="D03" id="DD02_rev" to="D02" type="L1S25" />
+	<edge from="D04" id="DD03_rev" to="D03" type="L1S25" />
+
+	<edge from="A01" id="AB01" to="B01" type="L1S25" />
+	<edge from="B01" id="BC01" to="C01" type="L1S25" />
+	<edge from="C01" id="CD01" to="D01" type="L1S25" />
+
+	<edge from="B01" id="BA01" to="A01" type="L1S25" />
+	<edge from="C01" id="CB01" to="B01" type="L1S25" />
+	<edge from="D01" id="DC01" to="C01" type="L1S25" />
+
+	<edge from="A02" id="AB02" to="B02" type="L1S25" />
+	<edge from="B02" id="BC02" to="C02" type="L1S25" />
+	<edge from="C02" id="CD02" to="D02" type="L1S25" />
+
+	<edge from="B02" id="BA02" to="A02" type="L1S25" />
+	<edge from="C02" id="CB02" to="B02" type="L1S25" />
+	<edge from="D02" id="DC02" to="C02" type="L1S25" />
+
+	<edge from="A03" id="AB03" to="B03" type="L1S25" />
+	<edge from="B03" id="BC03" to="C03" type="L1S25" />
+	<edge from="C03" id="CD03" to="D03" type="L1S25" />
+
+	<edge from="B03" id="BA03" to="A03" type="L1S25" />
+	<edge from="C03" id="CB03" to="B03" type="L1S25" />
+	<edge from="D03" id="DC03" to="C03" type="L1S25" />
+
+	<edge from="A04" id="AB04" to="B04" type="L1S25" />
+	<edge from="B04" id="BC04" to="C04" type="L1S25" />
+	<edge from="C04" id="CD04" to="D04" type="L1S25" />
+
+
+	<edge from="B04" id="BA04" to="A04" type="L1S25" />
+	<edge from="C04" id="CB04" to="B04" type="L1S25" />
+	<edge from="D04" id="DC04" to="C04" type="L1S25" />
+
+</edges>

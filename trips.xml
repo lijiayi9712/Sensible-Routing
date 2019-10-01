@@ -1,0 +1,11 @@
+<trips>
+    <trip id="t1_1" depart="25" from="CB01" to="DD02_rev" departPos = "45" arrivalPos = "45"/>
+    <trip id="t1_2" depart="55" from="DD02_rev" to="AA02" departPos = "45" arrivalPos = "45" />
+    <trip id="t1_3" depart="85" from="AA02" to="CB01" departPos = "55" arrivalPos = "45" />
+    <trip id="t2_1" depart="35" from="CB01" to="AA02" departPos = "45" arrivalPos = "45"/>
+    <trip id="t2_2" depart="65" from="AA02" to="DD02_rev" departPos = "45" arrivalPos = "45"/>
+    <trip id="t2_3" depart="95" from="DD02_rev"  to="CB01" departPos = "45" arrivalPos = "45"/>
+    <trip id="t3_1" depart="45" from="CB01" to="BC04" departPos = "45" arrivalPos = "45"/>
+    <trip id="t3_2" depart="80" from="BC04" to="AA02" departPos = "45" arrivalPos = "45"/>
+    <trip id="t3_3" depart="110" from="AA02" to="CB01" departPos = "45" arrivalPos = "45"/>
+</trips>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional>
+    <parkingArea id="P1" lane="AA02_0" startPos="45" endPos="55">
+        <space x="20" y="130" length="5" angle="315"/>
+        <space x="25" y="130" length="5" angle="315"/>
+        <space x="30" y="130" length="5" angle="315"/>
+        <space x="35" y="130" length="5" angle="315"/>
+        <space x="40" y="130" length="5" angle="315"/>
+        <space x="20.0" y="135.0" length="5" angle="315"/>
+        <space x="25.0" y="135.0" length="5" angle="315"/>
+        <space x="30.0" y="135.0" length="5" angle="315"/>
+        <space x="35.0" y="135.0" length="5" angle="315"/>
+        <space x="40.0" y="135.0" length="5" angle="315"/>
+        <space x="20.0" y="140.0" length="5" angle="315"/>
+        <space x="25.0" y="140.0" length="5" angle="315"/>
+        <space x="30.0" y="140.0" length="5" angle="315"/>
+        <space x="35.0" y="140.0" length="5" angle="315"/>
+        <space x="40.0" y="140.0" length="5" angle="315"/>
+        <space x="20.0" y="145.0" length="5" angle="315"/>
+        <space x="25.0" y="145.0" length="5" angle="315"/>
+        <space x="30.0" y="145.0" length="5" angle="315"/>
+        <space x="35.0" y="145.0" length="5" angle="315"/>
+        <space x="40.0" y="145.0" length="5" angle="315"/>
+        <space x="20.0" y="150.0" length="5" angle="315"/>
+        <space x="25.0" y="150.0" length="5" angle="315"/>
+        <space x="30.0" y="150.0" length="5" angle="315"/>
+        <space x="35.0" y="150.0" length="5" angle="315"/>
+        <space x="40.0" y="150.0" length="5" angle="315"/>
+    </parkingArea>
+</additional>
