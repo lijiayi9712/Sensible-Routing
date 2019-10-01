@@ -1,12 +1,21 @@
-import traci
-import sumolib
-from sumolib import checkBinary
-import numpy as np
+
 import subprocess
 import os
 import sys
 import atexit
 import time
+
+
+if 'SUMO_HOME' in os.environ:
+    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    sys.path.append(tools)
+else:
+    sys.exit('please declare environment variable "SUMO_HOME"')
+
+import traci
+import sumolib
+from sumolib import checkBinary
+import numpy as np
 
 # export SUMO_HOME="/Users/LiJiayi/sumo"
 np.random.seed(42)  # make tests reproducible 
@@ -82,7 +91,6 @@ def step(time, missions, idle_vehs, working_vehs):
     if random_num <= 0.1 and len(idle_vehs) > 0:
         mission_index = np.random.choice(len(missions))
         mission = missions[mission_index]
-        print(mission)
         mission_veh = idle_vehs.pop()
         working_vehs.append(mission_veh)
         route = choose_route(mission[0], mission[1])[:-1] + \
@@ -95,13 +103,14 @@ def step(time, missions, idle_vehs, working_vehs):
                    mission[3] + '_' + \
                    str(time)
         traci.route.add(route_id, route)
+        
         traci.vehicle.setRoute(mission_veh, route)
         duration_func = lambda x: 20
-        traci.vehicle.setParkingAreaStop(
-            vehID=mission_veh, 
-            stopID=mission[3], 
-            duration=0,
-        )
+        # traci.vehicle.setParkingAreaStop(
+        #     vehID=mission_veh, 
+        #     stopID=mission[3], 
+        #     duration=0,
+        # )
         for _ in range(20):
             traci.simulationStep()
         traci.vehicle.setParkingAreaStop(
@@ -114,11 +123,34 @@ def step(time, missions, idle_vehs, working_vehs):
             stopID=mission[2], 
             duration=duration_func(mission[2]),
         )
-        traci.vehicle.setParkingAreaStop(
-            vehID=mission_veh, 
-            stopID=mission[3], 
-            duration=duration_func(mission[3]),
-        )
+        # traci.vehicle.setParkingAreaStop(
+        #     vehID=mission_veh, 
+        #     stopID=mission[3], 
+        #     duration=2000,
+        # )
+        traci.vehicle.resume(mission_veh) 
+        finished = []
+        
+
+        for veh in working_vehs:
+            if len(traci.vehicle.getNextStops(veh)) != 0:
+                if traci.vehicle.getNextStops(veh)[-1][2] != 'P4':
+                    try:
+                        traci.vehicle.setParkingAreaStop(
+                            vehID=veh, 
+                            stopID='P4', 
+                            duration=2000,
+                        )
+                    except traci.exceptions.TraCIException:
+                        print(traci.vehicle.getPosition(veh))
+                        pass
+            try:
+                if traci.vehicle.getSpeed(veh) == 0.0 and traci.vehicle.getRouteIndex(veh) == 'CB01':
+                    finished.append(veh)
+                    idle_vehs.append(veh)
+            except traci.exceptions.TraCIException:
+                pass
+        working_vehs = [veh for veh in working_vehs if veh not in finished]
     traci.simulationStep()
         
 
@@ -153,6 +185,7 @@ if __name__ == '__main__':
         traci.vehicle.setParkingAreaStop(
             vehID=veh_id, stopID='P4', duration=10000)
         p4_instoccupancy = traci.simulation.getParameter(
+        
             'P4', 'parkingArea.occupancy')
         p4_instoccupancy = int(p4_instoccupancy)    
         while p4_instoccupancy < p4_occupancy + 1:
@@ -162,6 +195,7 @@ if __name__ == '__main__':
             p4_instoccupancy = int(p4_instoccupancy)    
         p4_occupancy = p4_occupancy + 1
     print("Initialization completed.")
+    
     missions = [
         ("P4", "P1", "P2", "P4"), 
         ("P4", "P1", "P3", "P4"), 
@@ -170,7 +204,7 @@ if __name__ == '__main__':
         ("P4", "P3", "P1", "P4"), 
         ("P4", "P3", "P2", "P4")
     ]
-    duration = 5000
+    duration = 50000
     working_vehs = []
     for time in range(duration):
         step(time, missions, idle_vehs, working_vehs)
