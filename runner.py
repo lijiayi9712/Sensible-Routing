@@ -102,15 +102,20 @@ def step(time, missions, idle_vehs, working_vehs):
                    mission[2] + '_' + \
                    mission[3] + '_' + \
                    str(time)
+
+
+    
+        traci.vehicle.setParkingAreaStop(
+            vehID=mission_veh, 
+            stopID=mission[3], 
+            duration=0,
+            )
+
         traci.route.add(route_id, route)
-        
         traci.vehicle.setRoute(mission_veh, route)
+
         duration_func = lambda x: 20
-        # traci.vehicle.setParkingAreaStop(
-        #     vehID=mission_veh, 
-        #     stopID=mission[3], 
-        #     duration=0,
-        # )
+        
         for _ in range(20):
             traci.simulationStep()
         traci.vehicle.setParkingAreaStop(
@@ -118,39 +123,37 @@ def step(time, missions, idle_vehs, working_vehs):
             stopID=mission[1], 
             duration=duration_func(mission[1]),
         )
+
         traci.vehicle.setParkingAreaStop(
             vehID=mission_veh, 
             stopID=mission[2], 
             duration=duration_func(mission[2]),
+           
         )
-        # traci.vehicle.setParkingAreaStop(
-        #     vehID=mission_veh, 
-        #     stopID=mission[3], 
-        #     duration=2000,
-        # )
-        traci.vehicle.resume(mission_veh) 
-        finished = []
         
+        finished = []
 
         for veh in working_vehs:
             if len(traci.vehicle.getNextStops(veh)) != 0:
-                if traci.vehicle.getNextStops(veh)[-1][2] != 'P4':
+                if len(traci.vehicle.getNextStops(veh)) < 2:
                     try:
                         traci.vehicle.setParkingAreaStop(
                             vehID=veh, 
                             stopID='P4', 
-                            duration=2000,
+                            duration=1000000,
                         )
                     except traci.exceptions.TraCIException:
-                        print(traci.vehicle.getPosition(veh))
+                        print("stop car fail " + str(veh))
+                        # print(traci.vehicle.getPosition(veh))
                         pass
             try:
                 if traci.vehicle.getSpeed(veh) == 0.0 and traci.vehicle.getRouteIndex(veh) == 'CB01':
                     finished.append(veh)
                     idle_vehs.append(veh)
             except traci.exceptions.TraCIException:
+                print("car go back fail " + str(veh))
                 pass
-        working_vehs = [veh for veh in working_vehs if veh not in finished]
+        working_vehs = [veh for veh in working_vehs if veh not in idle_vehs]
     traci.simulationStep()
         
 
@@ -174,7 +177,7 @@ if __name__ == '__main__':
     p4_occupancy = traci.simulation.getParameter('P4', 'parkingArea.occupancy')
     p4_occupancy = int(p4_occupancy)
     idle_vehs = []    
-    for veh_index in range(100):
+    for veh_index in range(10):
         veh_id = 'veh_' + str(veh_index)
         traci.vehicle.addFull(
             vehID=veh_id,
@@ -183,9 +186,8 @@ if __name__ == '__main__':
         )
         idle_vehs.append(veh_id)
         traci.vehicle.setParkingAreaStop(
-            vehID=veh_id, stopID='P4', duration=10000)
+            vehID=veh_id, stopID='P4', duration=1000000)
         p4_instoccupancy = traci.simulation.getParameter(
-        
             'P4', 'parkingArea.occupancy')
         p4_instoccupancy = int(p4_instoccupancy)    
         while p4_instoccupancy < p4_occupancy + 1:
