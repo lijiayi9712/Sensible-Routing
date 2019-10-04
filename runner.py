@@ -17,7 +17,8 @@ import sumolib
 from sumolib import checkBinary
 import numpy as np
 
-# export SUMO_HOME="/Users/LiJiayi/sumo"
+
+
 np.random.seed(42)  # make tests reproducible 
 SIM_PHASE = 1800 #each simulation runs 30 minutes
 parkingArea = {'CB01': 'P4', 'AA02': 'P1', 'BC04': 'P2', 'DD02_rev': 'P3'}
@@ -85,6 +86,8 @@ def init():
     ]
     traci.start(config)
 
+veh_states = {} #mapping each vehicle to a tuple (stop_counter, route)
+
 
 def step(time, missions, idle_vehs, working_vehs):
     random_num = np.random.uniform(0, 1)
@@ -96,6 +99,8 @@ def step(time, missions, idle_vehs, working_vehs):
         route = choose_route(mission[0], mission[1])[:-1] + \
                 choose_route(mission[1], mission[2])[:-1] + \
                 choose_route(mission[2], mission[3])
+
+
         route_id = str(mission_veh) + \
                    mission[0] + '_' + \
                    mission[1] + '_' + \
@@ -103,8 +108,6 @@ def step(time, missions, idle_vehs, working_vehs):
                    mission[3] + '_' + \
                    str(time)
 
-
-    
         traci.vehicle.setParkingAreaStop(
             vehID=mission_veh, 
             stopID=mission[3], 
@@ -116,8 +119,9 @@ def step(time, missions, idle_vehs, working_vehs):
 
         duration_func = lambda x: 20
         
-        for _ in range(20):
+        for _ in range(30):
             traci.simulationStep()
+
         traci.vehicle.setParkingAreaStop(
             vehID=mission_veh, 
             stopID=mission[1], 
@@ -131,28 +135,18 @@ def step(time, missions, idle_vehs, working_vehs):
            
         )
         
+        traci.vehicle.setParkingAreaStop(
+                        vehID=mission_veh, 
+                        stopID='P4', 
+                        duration=1000000,
+                    )
+        
         finished = []
 
         for veh in working_vehs:
-            if len(traci.vehicle.getNextStops(veh)) != 0:
-                if len(traci.vehicle.getNextStops(veh)) < 2:
-                    try:
-                        traci.vehicle.setParkingAreaStop(
-                            vehID=veh, 
-                            stopID='P4', 
-                            duration=1000000,
-                        )
-                    except traci.exceptions.TraCIException:
-                        print("stop car fail " + str(veh))
-                        # print(traci.vehicle.getPosition(veh))
-                        pass
-            try:
-                if traci.vehicle.getSpeed(veh) == 0.0 and traci.vehicle.getRouteIndex(veh) == 'CB01':
-                    finished.append(veh)
-                    idle_vehs.append(veh)
-            except traci.exceptions.TraCIException:
-                print("car go back fail " + str(veh))
-                pass
+            if traci.vehicle.getSpeed(veh) == 0.0 and traci.vehicle.getRouteIndex(veh) == 'CB01':
+                finished.append(veh)
+                idle_vehs.append(veh)
         working_vehs = [veh for veh in working_vehs if veh not in idle_vehs]
     traci.simulationStep()
         
@@ -177,7 +171,7 @@ if __name__ == '__main__':
     p4_occupancy = traci.simulation.getParameter('P4', 'parkingArea.occupancy')
     p4_occupancy = int(p4_occupancy)
     idle_vehs = []    
-    for veh_index in range(10):
+    for veh_index in range(100):
         veh_id = 'veh_' + str(veh_index)
         traci.vehicle.addFull(
             vehID=veh_id,
