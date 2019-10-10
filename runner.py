@@ -5,6 +5,9 @@ import sys
 import atexit
 import time
 
+import datetime
+import pandas as pd
+
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -20,7 +23,7 @@ import numpy as np
 
 
 np.random.seed(42)  # make tests reproducible 
-SIM_PHASE = 1800 #each simulation runs 30 minutes
+SIM_PHASE = 1800 # each simulation runs 30 minutes
 parkingArea = {'CB01': 'P4', 'AA02': 'P1', 'BC04': 'P2', 'DD02_rev': 'P3'}
 shortest_paths = {}
 shortest_paths[('P4', 'P1')] = [
@@ -67,6 +70,9 @@ shortest_paths[('P3', 'P4')] = [
 ]
 
 
+
+
+
 def init():
     netconvert_cmd = [
         'netconvert',
@@ -98,28 +104,63 @@ def step(time, missions, idle_vehs, working_vehs):
         mission_veh = idle_vehs.pop()
         working_vehs.append(mission_veh)
 
-        veh_states[mission_veh] = (0, 0, 0, mission)
+        veh_states[mission_veh] = (0, 0, 0, 0, mission)
 
         traci.vehicle.setParkingAreaStop(
-            vehID=mission_veh, 
-            stopID=mission[0], 
-            duration=2,
+            vehID = mission_veh, 
+            stopID = mission[0], 
+            duration = 2,
         )
 
         for t in range(1):
             traci.simulationStep()
-        finished = []
+        
 
+    finished = []
     for veh in working_vehs: 
+        # print('veh speed' + str(traci.vehicle.getSpeed(veh))) 
+        # print('veh current route '  + str(traci.vehicle.getRoadID(veh)))
+        # print('Stopped? ' + str(traci.vehicle.isStoppedParking(veh)))
+        # print('counter' + str(counter))
         counter = veh_states[veh][0]
         stop_set = veh_states[veh][1]
         route_set = veh_states[veh][2]
-        veh_stops = veh_states[veh][3]
+        just_depart = veh_states[veh][3]
+        veh_stops = veh_states[veh][4]
+        
+        # print('veh speed' + str(traci.vehicle.getSpeed(veh))) 
+        # print('veh current route '  + str(traci.vehicle.getRoadID(veh)))
+        # print('Stopped? ' + str(traci.vehicle.isStoppedParking(veh)))
+        # print('counter' + str(counter))
+        if (traci.vehicle.isStoppedParking(veh) == False) and just_depart == 0:
+            if counter == 2:
+                # print("SET leave")
+                df_vehs.at[veh, 'first_stop_leave_time'] = pd.datetime.now()
+                print(str(veh) + 'first_stop_leave_time')
+                print(pd.datetime.now())
+                df_vehs.at[veh, 'first_stop_duration'] = pd.to_timedelta(df_vehs.loc[veh]['first_stop_leave_time'] - df_vehs.loc[veh]['first_stop_arrival_time']).total_seconds()
+            if counter == 3:
+                df_vehs.at[veh, 'second_stop_leave_time'] = pd.datetime.now()
+                print(str(veh) +'second_stop_leave_time')
+                print(pd.datetime.now())
+                df_vehs.at[veh, 'second_stop_duration'] = pd.to_timedelta(df_vehs.loc[veh]['second_stop_leave_time'] - df_vehs.loc[veh]['second_stop_arrival_time']).total_seconds()
+            just_depart = 1
 
         if traci.vehicle.isStoppedParking(veh) and stop_set == 0 and route_set == 0 and counter < 3:
+            just_depart = 0
+            if counter == 1:
+                # print("SET arrive")
+                df_vehs.at[veh, 'first_stop'] = veh_stops[counter]
+                df_vehs.at[veh, 'first_stop_arrival_time'] = pd.datetime.now()
+                print(str(veh) +'first_stop_arrival_time')
+                print(pd.datetime.now())
+            if counter == 2:
+                df_vehs.at[veh, 'second_stop'] = veh_stops[counter]
+                df_vehs.at[veh, 'second_stop_arrival_time'] = pd.datetime.now()
+                print(str(veh) +'second_stop_arrival_time')
+                print(pd.datetime.now())
+                
             earlier_stop = veh_stops[counter] 
-            new_stop = veh_stops[counter+1]
-            earlier_stop = veh_stops[counter]
             new_stop = veh_stops[counter+1]
 
             route_seg = choose_route(earlier_stop, new_stop)
@@ -140,22 +181,30 @@ def step(time, missions, idle_vehs, working_vehs):
             )
             stop_set = 1
             counter += 1
-      
-            
         
+
         if traci.vehicle.isStoppedParking(veh) == False:
             stop_set = 0
             route_set = 0
-        veh_states[veh] = (counter, stop_set, route_set, veh_stops)
 
-        if traci.vehicle.getSpeed(veh) == 0.0 and traci.vehicle.getRouteIndex(veh) == 'CB01':
-            finished.append(veh)
+        veh_states[veh] = (counter, stop_set, route_set, just_depart, veh_stops)
+
+        if traci.vehicle.isStoppedParking(veh) and traci.vehicle.getRoadID(veh) == 'CB01' and counter > 1:
+            # print(pd.datetime.now())
+            # print(str(veh) + 'back_time')
+            df_vehs.at[veh, 'back_time'] = pd.datetime.now()
+            print("=============================================")
             idle_vehs.append(veh)
-            veh_states[veh] = (0, 0, 0, veh_route)
-        working_vehs = [veh for veh in working_vehs if veh not in idle_vehs]
+            # print('idle' + str(idle_vehs))
+            working_vehs = [veh for veh in working_vehs if veh not in idle_vehs]
+            # print('working' + str(working_vehs))
+
+            veh_states[veh] = (0, 0, 0, 0, veh_stops)
+
+            #print(working_vehs)
+    
     traci.simulationStep()
         
-
 def choose_route(origin, destination):
     routes = shortest_paths[(origin, destination)]
     route_index = np.random.choice(len(routes))
@@ -168,7 +217,14 @@ def close():
 
 
 if __name__ == '__main__':
+    df_cols = ['init_time', 'first_stop', 'first_stop_arrival_time', 'first_stop_leave_time', 'first_stop_duration', 'second_stop', 'second_stop_arrival_time', 'second_stop_leave_time', 'second_stop_duration', 'back_time'] # for each veh, save the key trajectory information
+    df_index = ['veh_' + str(i) for i in range(100)]
+    dtype={'first_stop': 'string','second_stop': 'string'}
+    df_vehs = pd.DataFrame(index=df_index, columns=df_cols)
+    df_vehs = df_vehs.fillna('0')
+
     print('Initializing...')
+
     init()
     route_id = 'init'
     route = ['CB01']
@@ -176,8 +232,13 @@ if __name__ == '__main__':
     p4_occupancy = traci.simulation.getParameter('P4', 'parkingArea.occupancy')
     p4_occupancy = int(p4_occupancy)
     idle_vehs = []    
-    for veh_index in range(100):
+    for veh_index in range(1):
         veh_id = 'veh_' + str(veh_index)
+        current_time = datetime.datetime.now()
+        # print(df_vehs.at[veh_index, 'init_time'])
+        print('init_time' + str(current_time))
+        df_vehs.at[veh_id, 'init_time'] = current_time
+        
         traci.vehicle.addFull(
             vehID=veh_id,
             routeID=route_id,
@@ -205,9 +266,11 @@ if __name__ == '__main__':
         ("P4", "P3", "P1", "P4"), 
         ("P4", "P3", "P2", "P4")
     ]
-    duration = 50000
+    duration = 10000
     working_vehs = []
     for time in range(duration):
         step(time, missions, idle_vehs, working_vehs)
+    df_vehs.to_pickle('saved_trajectories')
+    df_vehs.to_csv('trajectories.csv', sep='\t', encoding='utf-8')
     close()
 
