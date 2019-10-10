@@ -1,5 +1,6 @@
 
 import subprocess
+import argparse
 import os
 import sys
 import atexit
@@ -95,7 +96,7 @@ def init():
 veh_states = {} #mapping each vehicle to a tuple (stop_counter, stop_set, route_set, mission)
 
 
-def step(time, missions, idle_vehs, working_vehs):
+def step(time, missions, idle_vehs, working_vehs, recurring):
     random_num = np.random.uniform(0, 1)
 
     if random_num <= 0.5 and len(idle_vehs) > 0:
@@ -177,14 +178,11 @@ def step(time, missions, idle_vehs, working_vehs):
         veh_states[veh] = (counter, stop_set, route_set, just_depart, veh_stops)
 
         if traci.vehicle.isStoppedParking(veh) and traci.vehicle.getRoadID(veh) == 'CB01' and counter > 1:
-            # print(pd.datetime.now())
-            # print(str(veh) + 'back_time')
+
             df_vehs.at[veh, 'back_time'] = pd.datetime.now()
-            print("=============================================")
-            idle_vehs.append(veh)
-            # print('idle' + str(idle_vehs))
-            working_vehs = [veh for veh in working_vehs if veh not in idle_vehs]
-            # print('working' + str(working_vehs))
+            if recurring:
+                idle_vehs.append(veh)
+                working_vehs = [veh for veh in working_vehs if veh not in idle_vehs]
 
             veh_states[veh] = (0, 0, 0, 0, veh_stops)
 
@@ -204,6 +202,20 @@ def close():
 
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-r',
+        '--recurring',
+        help='Specify test duration in number of steps.',
+        type=int,
+        default=1000
+    )
+    args = parser.parse_args()
+
+    recurring = args.recurring
+
+
     df_cols = ['init_time', 'first_stop', 'first_stop_arrival_time', 'first_stop_leave_time', 'first_stop_duration', 'second_stop', 'second_stop_arrival_time', 'second_stop_leave_time', 'second_stop_duration', 'back_time'] # for each veh, save the key trajectory information
     df_index = ['veh_' + str(i) for i in range(100)]
     dtype={'first_stop': 'string','second_stop': 'string'}
@@ -254,7 +266,7 @@ if __name__ == '__main__':
     duration = 10000
     working_vehs = []
     for time in range(duration):
-        step(time, missions, idle_vehs, working_vehs)
+        step(time, missions, idle_vehs, working_vehs, recurring)
     df_vehs.to_pickle('saved_trajectories')
     df_vehs.to_csv('trajectories.csv', sep='\t', encoding='utf-8')
     close()
