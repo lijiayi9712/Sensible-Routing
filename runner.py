@@ -119,34 +119,31 @@ def step(time, missions, idle_vehs, working_vehs, recurring):
 
     finished = []
     for veh in working_vehs: 
-        
         counter = veh_states[veh][0]
         stop_set = veh_states[veh][1]
         route_set = veh_states[veh][2]
         just_depart = veh_states[veh][3]
         veh_stops = veh_states[veh][4]
         
-        # print('veh speed' + str(traci.vehicle.getSpeed(veh))) 
-        # print('veh current route '  + str(traci.vehicle.getRoadID(veh)))
-        # print('Stopped? ' + str(traci.vehicle.isStoppedParking(veh)))
-        # print('counter' + str(counter))
         if (traci.vehicle.isStoppedParking(veh) == False) and just_depart == 0:
             if counter == 2:
-                df_vehs.at[veh, 'first_stop_leave_time'] = pd.datetime.now()
-                df_vehs.at[veh, 'first_stop_duration'] = pd.to_timedelta(df_vehs.loc[veh]['first_stop_leave_time'] - df_vehs.loc[veh]['first_stop_arrival_time']).total_seconds()
+                df_vehs.at[veh, 'first_stop_leave_time'] = traci.simulation.getTime() #pd.datetime.now()
+                delta = df_vehs.loc[veh]['first_stop_leave_time'] - df_vehs.loc[veh]['first_stop_arrival_time']
+                df_vehs.at[veh, 'first_stop_duration'] = delta
             if counter == 3:
-                df_vehs.at[veh, 'second_stop_leave_time'] = pd.datetime.now()
-                df_vehs.at[veh, 'second_stop_duration'] = pd.to_timedelta(df_vehs.loc[veh]['second_stop_leave_time'] - df_vehs.loc[veh]['second_stop_arrival_time']).total_seconds()
+                df_vehs.at[veh, 'second_stop_leave_time'] = traci.simulation.getTime() #pd.datetime.now()
+                delta = df_vehs.loc[veh]['second_stop_leave_time'] - df_vehs.loc[veh]['second_stop_arrival_time']
+                df_vehs.at[veh, 'second_stop_duration'] = delta
             just_depart = 1
 
         if traci.vehicle.isStoppedParking(veh) and stop_set == 0 and route_set == 0 and counter < 3:
             just_depart = 0
             if counter == 1:
                 df_vehs.at[veh, 'first_stop'] = veh_stops[counter]
-                df_vehs.at[veh, 'first_stop_arrival_time'] = pd.datetime.now()
+                df_vehs.at[veh, 'first_stop_arrival_time'] = traci.simulation.getTime() #pd.datetime.now()
             if counter == 2:
                 df_vehs.at[veh, 'second_stop'] = veh_stops[counter]
-                df_vehs.at[veh, 'second_stop_arrival_time'] = pd.datetime.now()
+                df_vehs.at[veh, 'second_stop_arrival_time'] = traci.simulation.getTime() #pd.datetime.now()
                 
             earlier_stop = veh_stops[counter] 
             new_stop = veh_stops[counter+1]
@@ -161,7 +158,7 @@ def step(time, missions, idle_vehs, working_vehs, recurring):
             traci.simulationStep()
             route_set = 1
 
-            duration_func = lambda x: 20 if x != 'P4' else 1000000
+            duration_func = lambda x: 10 if x != 'P4' else 1000000
             traci.vehicle.setParkingAreaStop(
                 vehID=veh, 
                 stopID=new_stop,
@@ -179,14 +176,12 @@ def step(time, missions, idle_vehs, working_vehs, recurring):
 
         if traci.vehicle.isStoppedParking(veh) and traci.vehicle.getRoadID(veh) == 'CB01' and counter > 1:
 
-            df_vehs.at[veh, 'back_time'] = pd.datetime.now()
+            df_vehs.at[veh, 'back_time'] = traci.simulation.getTime()
             if recurring:
                 idle_vehs.append(veh)
                 working_vehs = [veh for veh in working_vehs if veh not in idle_vehs]
 
             veh_states[veh] = (0, 0, 0, 0, veh_stops)
-
-            #print(working_vehs)
     
     traci.simulationStep()
         
@@ -202,7 +197,6 @@ def close():
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-r',
@@ -214,7 +208,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     recurring = args.recurring
-
 
     df_cols = ['init_time', 'first_stop', 'first_stop_arrival_time', 'first_stop_leave_time', 'first_stop_duration', 'second_stop', 'second_stop_arrival_time', 'second_stop_leave_time', 'second_stop_duration', 'back_time'] # for each veh, save the key trajectory information
     df_index = ['veh_' + str(i) for i in range(100)]
@@ -233,7 +226,7 @@ if __name__ == '__main__':
     idle_vehs = []    
     for veh_index in range(100):
         veh_id = 'veh_' + str(veh_index)
-        current_time = datetime.datetime.now()
+        current_time = traci.simulation.getTime()#datetime.datetime.now()
         df_vehs.at[veh_id, 'init_time'] = current_time
 
         traci.vehicle.addFull(
@@ -263,7 +256,7 @@ if __name__ == '__main__':
         ("P4", "P3", "P1", "P4"), 
         ("P4", "P3", "P2", "P4")
     ]
-    duration = 10000
+    duration = 3000
     working_vehs = []
     for time in range(duration):
         step(time, missions, idle_vehs, working_vehs, recurring)
