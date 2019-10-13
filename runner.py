@@ -226,7 +226,7 @@ if __name__ == '__main__':
     idle_vehs = []    
     for veh_index in range(100):
         veh_id = 'veh_' + str(veh_index)
-        current_time = traci.simulation.getTime()#datetime.datetime.now()
+        current_time = traci.simulation.getTime()
         df_vehs.at[veh_id, 'init_time'] = current_time
 
         traci.vehicle.addFull(
