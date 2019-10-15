@@ -21,7 +21,7 @@ from sumolib import checkBinary
 import numpy as np
 
 net = sumolib.net.readNet('mini.net.xml')
-lane = 'DC03_0'
+lane = 'BB02_rev_0'
 
 shape_info = net.getLane(lane).getShape(lane)
 #print(shape_info)
@@ -52,14 +52,14 @@ additionals = inputs.find('./additional-files').attrib['value']
 
 
 print("start building bounding_boxes")
-
-print(direction)
-print(vertical)
+print(n)
+print(shape_info)
 for i in range(n):
-	P_name = 'P' + lane + str(i)
 	if vertical == 0:
 		a = 90
 		if direction == -1:
+			curr_i = n-1-i
+			P_name = 'P' + lane + str(curr_i)
 			x, y = shape_info[-1] # (x, y) is the starting point
 			x, y = int(x), int(y)
 			y_min = y + 5
@@ -69,6 +69,7 @@ for i in range(n):
 			s = length - (15 + (i+1)*unit_size)
 			e = length - (15 + i*unit_size)
 		else:
+			P_name = 'P' + lane + str(i)
 			x, y =  shape_info[0]
 			x, y = int(x), int(y)
 			y_min = y - 5
@@ -80,6 +81,7 @@ for i in range(n):
 	else:
 		a = 0
 		if direction == 1:
+			P_name = 'P' + lane + str(i)
 			x, y =  shape_info[0]
 			x, y = int(x), int(y)
 			x_min = x
@@ -89,6 +91,8 @@ for i in range(n):
 			s = 12 + i*unit_size 
 			e = 12 + (i+1)*unit_size
 		else:
+			curr_i = n-1-i
+			P_name = 'P' + lane + str(curr_i)
 			x, y =  shape_info[-1]
 			x, y = int(x), int(y)
 			x_min = x - 5
@@ -107,6 +111,7 @@ for i in range(n):
 
 inputs.find('./additional-files').set('value', additionals)
 tree.write('mini.sumocfg')
+
 #print(inputs.find('./additional-files').attrib['value'])
 # print(c.get('begin'))
 #c.set('additional-files','Completed')

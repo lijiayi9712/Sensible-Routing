@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional>
+    <parkingArea id="PBB02_rev_06" lane="BB02_rev_0" startPos="69" endPos="77">
+        <space x="95" y="118" length="5" angle="0"/>
+    </parkingArea>
+</additional>
