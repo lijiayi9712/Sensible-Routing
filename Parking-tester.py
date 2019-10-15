@@ -45,22 +45,58 @@ def close():
 	sys.stdout.flush()
 
 if __name__ == '__main__':
-	init()
-	veh_id='veh01'
-	route_id='init'
-	route=['BB03_rev']
-	traci.route.add(route_id, route)
-	traci.vehicle.addFull(
-            vehID=veh_id,
+    init()
+    veh_id1='veh01'
+    veh_id2='veh02'
+    veh_id3='veh03'
+    veh_id4='veh04'
+
+    route_id='init'
+    route=['DC03']
+    traci.route.add(route_id, route)
+    traci.vehicle.addFull(
+            vehID=veh_id1,
             routeID=route_id,
             departSpeed=0,
     )
-	traci.vehicle.setParkingAreaStop(
-            vehID=veh_id, stopID='PBB03_rev_02', duration=2)
-	traci.vehicle.setParkingAreaStop(
-            vehID=veh_id, stopID='PBB03_rev_04', duration=2)
-	traci.vehicle.setParkingAreaStop(
-            vehID=veh_id, stopID='PBB03_rev_05', duration=1)
-	for t in range(100):
-		traci.simulationStep()
-	close()
+    traci.vehicle.setParkingAreaStop(
+            vehID=veh_id1, stopID='PDC03_07', duration=5)
+    traci.vehicle.setParkingAreaStop(
+            vehID=veh_id1, stopID='PDC03_05', duration=5)
+    # traci.vehicle.setParkingAreaStop(
+    #         vehID=veh_id1, stopID='PDC03_02', duration=3)
+
+    for t in range(3):
+        traci.simulationStep()
+
+    traci.vehicle.addFull(
+            vehID=veh_id2,
+            routeID=route_id,
+            departSpeed=0,
+    )
+    traci.vehicle.setParkingAreaStop(
+            vehID=veh_id2, stopID='PDC03_07', duration=5)
+    traci.vehicle.setParkingAreaStop(
+            vehID=veh_id2, stopID='PDC03_06', duration=5)
+    # traci.vehicle.setParkingAreaStop(
+    #         vehID=veh_id2, stopID='PDC03_06', duration=3)
+
+    # for t in range(4):
+    #     traci.simulationStep()
+
+    # traci.vehicle.addFull(
+    #         vehID=veh_id3,
+    #         routeID=route_id,
+    #         departSpeed=0,
+    # )
+    # traci.vehicle.setParkingAreaStop(
+    #         vehID=veh_id3, stopID='PDC03_00', duration=5)
+    # traci.vehicle.setParkingAreaStop(
+    #         vehID=veh_id3, stopID='PDC03_04', duration=5)
+    # traci.vehicle.setParkingAreaStop(
+    #         vehID=veh_id3, stopID='PDC03_06', duration=3)
+
+
+    for t in range(100):
+	    traci.simulationStep()
+    close()

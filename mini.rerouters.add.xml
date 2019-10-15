@@ -1,0 +1,68 @@
+<additional>
+    <rerouter id="PDC03_07" edges="DC03">
+        <interval begin="0.0" end="20000">
+            <!-- in order of distance --> 
+            <parkingAreaReroute id="PDC03_07" visible="true"/> <!-- dist: 0.0 -->
+      
+            <parkingAreaReroute id="PDC03_05" visible="true"/> <!-- dist: 257.57 -->
+            <parkingAreaReroute id="PDC03_04" visible="true"/> <!-- dist: 296.87 -->
+            <parkingAreaReroute id="PDC03_03" visible="true"/> <!-- dist: 0.0 -->
+            <parkingAreaReroute id="PDC03_02" visible="true"/> <!-- dist: 148.75 -->
+            <parkingAreaReroute id="PDC03_01" visible="true"/> <!-- dist: 257.57 -->
+        </interval>
+    </rerouter>
+
+
+    <rerouter id="PDC03_06" edges="DC03">
+        <interval begin="0.0" end="20000">
+            <!-- in order of distance --> 
+            <parkingAreaReroute id="PDC03_06" visible="true"/> <!-- dist: 148.75 -->
+            <parkingAreaReroute id="PDC03_05" visible="true"/> <!-- dist: 257.57 -->
+            <parkingAreaReroute id="PDC03_04" visible="true"/> <!-- dist: 296.87 -->
+            <parkingAreaReroute id="PDC03_03" visible="true"/> <!-- dist: 0.0 -->
+            <parkingAreaReroute id="PDC03_02" visible="true"/> <!-- dist: 148.75 -->
+            <parkingAreaReroute id="PDC03_01" visible="true"/> <!-- dist: 257.57 -->
+        </interval>
+    </rerouter>
+
+    <rerouter id="PDC03_05" edges="DC03">
+        <interval begin="0.0" end="20000">
+            <!-- in order of distance --> 
+            <parkingAreaReroute id="PDC03_05" visible="true"/> <!-- dist: 257.57 -->
+            <parkingAreaReroute id="PDC03_04" visible="true"/> <!-- dist: 296.87 -->
+            <parkingAreaReroute id="PDC03_03" visible="true"/> <!-- dist: 0.0 -->
+            <parkingAreaReroute id="PDC03_02" visible="true"/> <!-- dist: 148.75 -->
+            <parkingAreaReroute id="PDC03_01" visible="true"/> <!-- dist: 257.57 -->
+      
+        </interval>
+    </rerouter>
+
+    <rerouter id="PDC03_04" edges="DC03">
+        <interval begin="0.0" end="20000">
+            <!-- in order of distance --> 
+            <parkingAreaReroute id="PDC03_04" visible="true"/> <!-- dist: 0.0 -->
+            <parkingAreaReroute id="PDC03_03" visible="true"/> <!-- dist: 148.75 -->
+            <parkingAreaReroute id="PDC03_02" visible="true"/> <!-- dist: 257.57 -->
+            <parkingAreaReroute id="PDC03_01" visible="true"/> <!-- dist: 296.87 -->
+        </interval>
+    </rerouter>
+
+    <rerouter id="PDC03_03" edges="DC03">
+        <interval begin="0.0" end="20000">
+            <!-- in order of distance --> 
+            <parkingAreaReroute id="PDC03_03" visible="true"/> <!-- dist: 0.0 -->
+            <parkingAreaReroute id="PDC03_02" visible="true"/> <!-- dist: 148.75 -->
+            <parkingAreaReroute id="PDC03_01" visible="true"/> <!-- dist: 257.57 -->
+        </interval>
+    </rerouter>
+
+
+    <rerouter id="PDC03_02" edges="DC03">
+        <interval begin="0.0" end="20000">
+            <!-- in order of distance --> 
+            <parkingAreaReroute id="PDC03_02" visible="true"/> <!-- dist: 148.75 -->
+            <parkingAreaReroute id="PDC03_01" visible="true"/> <!-- dist: 257.57 -->
+        </interval>
+    </rerouter>
+
+</additional>
