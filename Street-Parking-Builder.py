@@ -21,7 +21,7 @@ from sumolib import checkBinary
 import numpy as np
 
 net = sumolib.net.readNet('mini.net.xml')
-edge = 'CB03'
+edge = 'BB02'
 lane = edge +  "_0"
 
 shape_info = net.getLane(lane).getShape(lane)
@@ -66,8 +66,8 @@ for i in range(n):
 			x, y = int(x), int(y)
 			y_min = y + 5
 			y_max = y + 10
-			x_min = x + 12 + i*unit_size + 10
-			x_max = x + 12 + (i+1)*unit_size + 10
+			x_min = x + 12 + i*unit_size + 2
+			x_max = x + 12 + (i+1)*unit_size + 2
 			s = length - (15 + (i+1)*unit_size)
 			e = length - (15 + i*unit_size)
 		else:
@@ -76,8 +76,8 @@ for i in range(n):
 			x, y = int(x), int(y)
 			y_min = y - 5
 			y_max = y 
-			x_min = x + 12 + i*unit_size + 10
-			x_max = x + 12 + (i+1)*unit_size + 10
+			x_min = x + 12 + i*unit_size + 14
+			x_max = x + 12 + (i+1)*unit_size + 14
 			s = 12 + i*unit_size
 			e = 12 + (i+1)*unit_size
 	else:
@@ -86,8 +86,8 @@ for i in range(n):
 			P_name = 'P' + lane + str(i)
 			x, y =  shape_info[0]
 			x, y = int(x), int(y)
-			x_min = x
-			x_max = x + 5
+			x_min = x + 5
+			x_max = x + 10
 			y_min = y + 12 + i*unit_size + 10
 			y_max = y + 12 + (i+1)*unit_size + 10
 			s = 12 + i*unit_size 
@@ -112,7 +112,7 @@ for i in range(n):
 	os.system("python generateParkingLots.py " + arguments)
 
 inputs.find('./additional-files').set('value', additionals)
-tree.write('mini.sumocfg')
+#tree.write('mini.sumocfg')
 
 
 
@@ -145,7 +145,7 @@ def rerouter_builder(n, lane, tree, root):
 
 import xml.dom.minidom as minidom
 
-rerouter_builder(n, lane, tree, root)
+#rerouter_builder(n, lane, tree, root)
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
@@ -156,6 +156,7 @@ def prettify(elem):
 
 
 #prettify once in the end
-pretty_elem = prettify(root)
-with open("mini.rerouters.add.xml", "w") as f:
-    f.write(pretty_elem)
+
+# pretty_elem = prettify(root)
+# with open("mini.rerouters.add.xml", "w") as f:
+#     f.write(pretty_elem)
