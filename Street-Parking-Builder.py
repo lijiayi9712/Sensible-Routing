@@ -21,7 +21,8 @@ from sumolib import checkBinary
 import numpy as np
 
 net = sumolib.net.readNet('mini.net.xml')
-lane = 'BB02_rev_0'
+edge = 'CB03'
+lane = edge +  "_0"
 
 shape_info = net.getLane(lane).getShape(lane)
 #print(shape_info)
@@ -29,6 +30,7 @@ if (shape_info[-1][0] - shape_info[0][0]) < 0 or (shape_info[-1][1] - shape_info
 	direction = -1 
 else:
 	direction = 1 #left to right or bottom to up
+
 
 delta_x = shape_info[-1][0] - shape_info[0][0]
 delta_y = shape_info[-1][1] - shape_info[0][1]
@@ -112,10 +114,48 @@ for i in range(n):
 inputs.find('./additional-files').set('value', additionals)
 tree.write('mini.sumocfg')
 
-#print(inputs.find('./additional-files').attrib['value'])
-# print(c.get('begin'))
-#c.set('additional-files','Completed')
 
-#root.insert(1, c)
-	#python generateParkingLots.py -i 'P5' -x 10 -y 0 -b "20,5,35,15" -n 1 -c lane -a 90 -s 70 -e 80
 
+"""
+=============================================================================================================================
+Setting up rerouter for street parking on current lane
+"""
+from xml.etree import ElementTree
+
+# if os.path.exists("mini.rerouters.add.xml") == False:
+
+tree = ElementTree.parse("mini.rerouters.add.xml")
+root = tree.getroot()
+def rerouter_builder(n, lane, tree, root):
+	for i in range(n):
+	    b = ElementTree.SubElement(root, 'rerouter')
+	    id_i = 'P' + str(lane) + str(i)
+	    b.set('id', id_i)
+	    b.set('edges', edge)
+	    curr_bi = 'b_{}'.format(str(i))
+	    curr_bi = ElementTree.SubElement(b, 'interval')
+	    curr_bi.set('begin', '0.0')
+	    curr_bi.set('end', '20000')
+	    for j in range(n):
+	        b_ij = ElementTree.SubElement(curr_bi, 'parkingAreaReroute')
+	        curr_slot = (i+j)%8
+	        b_ij.set('id', lane + str(curr_slot))
+	        b_ij.set('visible', 'true')
+	        tree.write('mini.rerouters.add.xml')
+
+import xml.dom.minidom as minidom
+
+rerouter_builder(n, lane, tree, root)
+
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ElementTree.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="\t")
+
+
+#prettify once in the end
+pretty_elem = prettify(root)
+with open("mini.rerouters.add.xml", "w") as f:
+    f.write(pretty_elem)
