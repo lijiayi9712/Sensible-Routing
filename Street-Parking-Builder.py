@@ -21,7 +21,7 @@ from sumolib import checkBinary
 import numpy as np
 
 net = sumolib.net.readNet('mini.net.xml')
-edge = 'BB02'
+edge = 'CD03'#
 lane = edge +  "_0"
 
 shape_info = net.getLane(lane).getShape(lane)
@@ -41,11 +41,13 @@ if delta_y == 0:
 else:
 	vertical = 1 
 
-length = max(delta_x * direction, delta_y * direction)
+length = max(delta_x * direction, delta_y * direction) - 15
 length = int(length)
-unit_size= 8
-n = int((length - 30) // unit_size) # number of street parking slots that need to be assigned 
+unit_size= 6
+delta = 3
+n = int((length - 20) // (unit_size+delta)) # number of street parking slots that need to be assigned 
 a = 90
+
 
 tree = ElementTree.parse("mini.sumocfg")
 root = tree.getroot()
@@ -56,6 +58,7 @@ additionals = inputs.find('./additional-files').attrib['value']
 print("start building bounding_boxes")
 print(n)
 print(shape_info)
+
 for i in range(n):
 	if vertical == 0:
 		a = 90
@@ -76,10 +79,10 @@ for i in range(n):
 			x, y = int(x), int(y)
 			y_min = y - 5
 			y_max = y 
-			x_min = x + 12 + i*unit_size + 14
-			x_max = x + 12 + (i+1)*unit_size + 14
-			s = 12 + i*unit_size
-			e = 12 + (i+1)*unit_size
+			x_min = x + 12 + i*unit_size + 13 + i*delta
+			x_max = x_min + unit_size
+			s = 12 + i*unit_size + i*delta
+			e = s + unit_size
 	else:
 		a = 0
 		if direction == 1:
@@ -112,7 +115,7 @@ for i in range(n):
 	os.system("python generateParkingLots.py " + arguments)
 
 inputs.find('./additional-files').set('value', additionals)
-#tree.write('mini.sumocfg')
+tree.write('mini.sumocfg')
 
 
 
@@ -138,14 +141,14 @@ def rerouter_builder(n, lane, tree, root):
 	    curr_bi.set('end', '20000')
 	    for j in range(n):
 	        b_ij = ElementTree.SubElement(curr_bi, 'parkingAreaReroute')
-	        curr_slot = (i+j)%8
-	        b_ij.set('id', lane + str(curr_slot))
+	        curr_slot = (i+j)%n
+	        b_ij.set('id', 'P' + lane + str(curr_slot))
 	        b_ij.set('visible', 'true')
 	        tree.write('mini.rerouters.add.xml')
 
 import xml.dom.minidom as minidom
 
-#rerouter_builder(n, lane, tree, root)
+rerouter_builder(n, lane, tree, root)
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
